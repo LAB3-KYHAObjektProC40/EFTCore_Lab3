@@ -7,6 +7,9 @@ Console.WriteLine("Hello, World!");
 //insertWeatherData();
 readWeatherData();
 updateWeatherData();
+readWeatherData();
+deleteWeatherData();
+readWeatherData();
 
 Console.WriteLine("Press any key to continue");
 Console.ReadKey();
@@ -50,5 +53,17 @@ static void updateWeatherData()
             db.SaveChanges();
     }
         return;
+
+}
+
+static void deleteWeatherData()
+{
+    using (var db = new EFContext())
+    {
+        WeatherData weatherData = db.WeatherData.Find(1);
+        db.WeatherData.Remove(weatherData);
+        db.SaveChanges();
+    }
+    return;
 
 }
