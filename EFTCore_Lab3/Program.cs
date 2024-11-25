@@ -6,6 +6,7 @@ using System.Collections.Generic;
 Console.WriteLine("Hello, World!");
 //insertWeatherData();
 readWeatherData();
+updateWeatherData();
 
 Console.WriteLine("Press any key to continue");
 Console.ReadKey();
@@ -38,4 +39,16 @@ static void readWeatherData()
         }
     }
     return;
+}
+
+static void updateWeatherData()
+{
+    using (var db = new EFContext())
+    {
+            WeatherData weatherdata = db.WeatherData.Find(1);
+            weatherdata.Location = "Inne";
+            db.SaveChanges();
+    }
+        return;
+
 }
