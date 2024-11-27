@@ -24,26 +24,18 @@ namespace EFTCore_Lab3.Migrations
 
             modelBuilder.Entity("EFTCore_Lab3.Models.WeatherData", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<DateTime>("Datum")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Luftfuktighet")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Humidity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Location")
+                    b.Property<string>("Plats")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Temperature")
+                    b.Property<double>("Temp")
                         .HasColumnType("float");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
 
                     b.ToTable("WeatherData");
                 });

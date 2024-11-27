@@ -1,18 +1,28 @@
 ﻿
 
+using CsvHelper.Configuration.Attributes;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.Numerics;
 
 namespace EFTCore_Lab3.Models
 {
+
+    [Keyless]
     public class WeatherData
     {
-        public int Id { get; set; }  // Primary key
-        public DateTime Timestamp { get; set; }   // Date and time of the measurement
+       
+        //[Name("Datum")]
+        public DateTime Datum { get; set; }   // Date and time of the measurement
 
-        public string Location { get; set; }  // Measurement location (e.g., "Ute", "Inne")
-        public double Temperature { get; set; }  // Temperature in Celsius
+        //[Name("Plats")]
+        public string Plats { get; set; }  // Measurement location (e.g., "Ute", "Inne")
 
-        public int Humidity { get; set; } // Humidity in percentage
+        //[Name("Temp")]
+        public double Temp { get; set; }  // Temperature in Celsius
+
+        //[Name("Luftfuktighet")]
+        public int Luftfuktighet { get; set; } // Humidity in percentage
 
        
 
