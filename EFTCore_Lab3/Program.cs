@@ -1,13 +1,13 @@
-﻿using EFTCore_Lab3.Utilities;
+﻿using WeatherDataApp.Utilities;
 using System;
 
-namespace EFTCore_Lab3
+namespace WeatherDataApp
 {
     class Program
     {
         static void Main(string[] args)
         {
-            string csvFilePath = @"C:\Users\Simon Major\source\repos\EFTCore_Lab3_Solution\EFTCore_Lab3\weatherdata.csv"; // Update with your actual path
+            string csvFilePath = @"C:\Users\Simon Major\source\repos\EFTCore_Lab3_Solution\EFTCore_Lab3\weatherdata.csv"; // Update with the actual CSV file path
 
             try
             {

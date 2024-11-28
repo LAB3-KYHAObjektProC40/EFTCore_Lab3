@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EFTCore_Lab3.Migrations
 {
     /// <inheritdoc />
-    public partial class AddPrimaryKeyToWeatherData : Migration
+    public partial class DBNEW : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,7 @@ namespace EFTCore_Lab3.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Datum = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Plats = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Temp = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Temp = table.Column<float>(type: "real", nullable: false),
                     Luftfuktighet = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
