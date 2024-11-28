@@ -1,7 +1,7 @@
-﻿using WeatherDataApp.Utilities;
+﻿using EFTCore_Lab3.Utilities;
 using System;
 
-namespace WeatherDataApp
+namespace EFTCore_Lab3
 {
     class Program
     {

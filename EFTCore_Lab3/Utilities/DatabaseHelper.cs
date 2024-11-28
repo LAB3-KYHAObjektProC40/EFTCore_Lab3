@@ -1,9 +1,9 @@
-﻿using WeatherDataApp.Data;
-using WeatherDataApp.Models;
+﻿using EFTCore_Lab3.Data;
+using EFTCore_Lab3.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace WeatherDataApp.Utilities
+namespace EFTCore_Lab3.Utilities
 {
     public static class DatabaseHelper
     {

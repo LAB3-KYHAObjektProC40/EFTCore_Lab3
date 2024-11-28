@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using CsvHelper.Configuration.Attributes;
 
-namespace WeatherDataApp.Models
+namespace  EFTCore_Lab3.Models
 {
     public class WeatherData
     {

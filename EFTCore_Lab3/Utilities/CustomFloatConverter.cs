@@ -4,7 +4,7 @@ using CsvHelper.TypeConversion;
 using System;
 using System.Globalization;
 
-namespace WeatherDataApp.Utilities
+namespace  EFTCore_Lab3.Utilities
 {
     public class CustomFloatConverter : SingleConverter
     {

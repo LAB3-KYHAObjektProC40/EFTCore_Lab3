@@ -1,13 +1,13 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
-using WeatherDataApp.Models;
-using WeatherDataApp.Utilities; // Import CustomFloatConverter
+using EFTCore_Lab3.Models;
+using EFTCore_Lab3.Utilities; 
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 
-namespace WeatherDataApp.Utilities
+namespace EFTCore_Lab3.Utilities
 {
     public static class CsvHelperService
     {

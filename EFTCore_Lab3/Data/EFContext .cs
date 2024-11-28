@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WeatherDataApp.Models;
+using EFTCore_Lab3.Models;
 
-namespace WeatherDataApp.Data
+namespace EFTCore_Lab3.Data
 {
     public class EFContext : DbContext
     {
