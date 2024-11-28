@@ -1,55 +1,28 @@
-﻿using EFCore.Models;
-using EFTCore_Lab3.Models;
-using System.Collections.Generic;
+﻿using EFTCore_Lab3.Utilities;
+using System;
 
-
-Console.WriteLine("Hello, World!");
-//insertWeatherData();
-updateWeatherData();
-deleteWeatherData();
-
-Console.WriteLine("Press any key to continue");
-Console.ReadKey();
-
-static void insertWeatherData()
+namespace EFTCore_Lab3
 {
-    using (var db = new EFContext())
+    class Program
     {
-        WeatherData weatherdata = new WeatherData();
-        weatherdata.Plats = "Ute";
-        db.Add(weatherdata);
+        static void Main(string[] args)
+        {
+            string csvFilePath = @"C:\Users\Simon Major\source\repos\EFTCore_Lab3_Solution\EFTCore_Lab3\weatherdata.csv"; // Update with your actual path
 
-        weatherdata = new WeatherData();
-        weatherdata.Plats = "Inne";
-        db.Add(weatherdata);
+            try
+            {
+                // Step 1: Read CSV file
+                var weatherData = CsvHelperService.ReadCsvFile(csvFilePath);
 
-        db.SaveChanges();
+                // Step 2: Save data to the database
+                DatabaseHelper.SaveToDatabase(weatherData);
+
+                Console.WriteLine($"{weatherData.Count} records successfully saved to the database.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
     }
-    return;
-}
-
-
-
-static void updateWeatherData()
-{
-    using (var db = new EFContext())
-    {
-        WeatherData weatherdata = db.WeatherData.Find(1);
-        weatherdata.Plats = "Inne";
-        db.SaveChanges();
-    }
-    return;
-
-}
-
-static void deleteWeatherData()
-{
-    using (var db = new EFContext())
-    {
-        WeatherData weatherData = db.WeatherData.Find(1);
-        db.WeatherData.Remove(weatherData);
-        db.SaveChanges();
-    }
-    return;
-
 }
