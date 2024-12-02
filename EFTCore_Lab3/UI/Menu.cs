@@ -327,29 +327,18 @@ namespace EFTCore_Lab3.UI
             using (var db = new EFContext())
             {
                 var allWeatherData = db.WeatherData.ToList();
+                var analysis = new TemperatureDifferenceAnalysis(allWeatherData);
 
-                if (!allWeatherData.Any())
-                {
-                    Console.WriteLine("No weather data available.");
-                    return;
-                }
-
-                var balconyAnalysis = new BalconyDoorAnalysis(allWeatherData);
-                var durations = balconyAnalysis.CalculateBalconyDoorOpenDuration();
-
-                if (!durations.Any())
-                {
-                    Console.WriteLine("No balcony open times calculated.");
-                    return;
-                }
+                var durations = analysis.CalculateBalconyDoorOpenDuration();
 
                 Console.WriteLine("Balkongdörrens öppettider per dag (sorterat efter längd):");
-                foreach (var (Date, DurationInHours) in durations)
+                foreach (var (Date, Duration) in durations)
                 {
-                    Console.WriteLine($"{Date:yyyy-MM-dd}: {DurationInHours:F2} timmar");
+                    Console.WriteLine($"{Date:yyyy-MM-dd}: {Duration.TotalHours:F2} timmar");
                 }
             }
         }
+
 
 
 
@@ -359,45 +348,19 @@ namespace EFTCore_Lab3.UI
         {
             using (var db = new EFContext())
             {
-                Console.WriteLine("DEBUG: Fetching all weather data from the database...");
-
-                // Fetch all weather data
                 var allWeatherData = db.WeatherData.ToList();
+                var analysis = new TemperatureDifferenceAnalysis(allWeatherData);
 
-                if (!allWeatherData.Any())
-                {
-                    Console.WriteLine("DEBUG: No weather data found in the database.");
-                    Console.WriteLine("No weather data available in the database.");
-                    return;
-                }
-
-                // Debugging counts of indoor and outdoor data
-                var indoorDataCount = allWeatherData.Count(w => w.Plats.Equals("Inne", StringComparison.OrdinalIgnoreCase));
-                var outdoorDataCount = allWeatherData.Count(w => w.Plats.Equals("Ute", StringComparison.OrdinalIgnoreCase));
-                Console.WriteLine($"DEBUG: Indoor data count: {indoorDataCount}");
-                Console.WriteLine($"DEBUG: Outdoor data count: {outdoorDataCount}");
-
-                Console.WriteLine("DEBUG: Initializing TemperatureDifferenceAnalysis...");
-                var tempDiffAnalysis = new TemperatureDifferenceAnalysis(allWeatherData);
-
-                Console.WriteLine("DEBUG: Sorting days by temperature difference...");
-                var differences = tempDiffAnalysis.SortByTemperatureDifference();
-
-                if (!differences.Any())
-                {
-                    Console.WriteLine("DEBUG: No temperature differences calculated. No matching timestamps or temperature data.");
-                    Console.WriteLine("No temperature differences found.");
-                    return;
-                }
+                var differences = analysis.SortByTemperatureDifference();
 
                 Console.WriteLine("Dagar sorterade efter temperaturskillnad (störst till minst):");
-                foreach (var (date, difference) in differences) // Named tuple items
+                foreach (var (Date, TemperatureDifference) in differences)
                 {
-                    Console.WriteLine($"DEBUG: Date: {date:yyyy-MM-dd}, Difference: {difference:F2}°C");
-                    Console.WriteLine($"{date:yyyy-MM-dd}: {difference:F2}°C");
+                    Console.WriteLine($"{Date:yyyy-MM-dd}: {TemperatureDifference:F2}°C");
                 }
             }
         }
+
 
 
 
