@@ -5,19 +5,19 @@
 https://miro.com/app/board/uXjVL_v6UMk=/?share_link_id=911541628206
 
 
+### To start
+1. Update the Database with: Update-Database
 
-1. Update-Database
-Update-Database
+2. Run program and select 1 in WEATHER DATA MENU, so the CSV file hopefully loads and import data to DB.
 
-Run program and select 1 in WEATHER DATA MENU, so the CSV file hopefully loads and import data to DB.
-IF not working:
+### IF not working:
 
-Remove migration folder
+1. Remove migration folder
 
-Add-Migration NewDatabase
+2. Add-Migration NewDatabase
 
-Update-Database
+3. Update-Database
 
-And run program and select 1 in WEATHER DATA MENU, so the CSV file hopefully loads and import data to DB.
+4. And run program and select 1 in WEATHER DATA MENU, so the CSV file hopefully loads and import data to DB.
 
 ### Hopefully the file path is updated to the "users" computers.
