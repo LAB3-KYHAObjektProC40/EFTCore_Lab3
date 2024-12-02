@@ -1,18 +1,18 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EFTCore_Lab3.Models;
+using EFTCore_Lab3.Core.Models;
 
-namespace EFTCore_Lab3.Utilities
+namespace EFTCore_Lab3.Core.Utilities
 {
-    public class Inomhus
+    public class Utomhus
     {
         private readonly List<WeatherData> _weatherData;
 
-        public Inomhus(List<WeatherData> weatherData)
+        public Utomhus(List<WeatherData> weatherData)
         {
-            // Filter only "Inne" data
-            _weatherData = weatherData.Where(data => data.Plats.Equals("Inne", StringComparison.OrdinalIgnoreCase)).ToList();
+            // Filter only outdoor ("Ute") data
+            _weatherData = weatherData.Where(data => data.Plats.Equals("Ute", StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
         // 1. Average temperature for a specific date
@@ -62,10 +62,26 @@ namespace EFTCore_Lab3.Utilities
                 .ToList();
         }
 
+        // 5. Date for meteorological autumn
+        public DateTime? GetDateForAutumn()
+        {
+            return _weatherData
+                .GroupBy(data => data.Datum.Date)
+                .FirstOrDefault(g => g.Average(data => data.Temp) <= 10 && g.Count() >= 5)?.Key;
+        }
+
+        // 6. Date for meteorological winter
+        public DateTime? GetDateForWinter()
+        {
+            return _weatherData
+                .GroupBy(data => data.Datum.Date)
+                .FirstOrDefault(g => g.Average(data => data.Temp) <= 0 && g.Count() >= 5)?.Key;
+        }
+
         // Helper method to calculate mold risk
         private static float CalculateMoldRisk(float temperature, int humidity)
         {
-            // Mold risk formula: temperature * (humidity / 100), only if humidity > 70 and temperature >= 0
+            // Simplified mold risk formula: Temp * (Humidity / 100), valid if Humidity > 70 and Temp >= 0
             return humidity > 70 && temperature >= 0 ? temperature * (humidity / 100f) : 0;
         }
     }

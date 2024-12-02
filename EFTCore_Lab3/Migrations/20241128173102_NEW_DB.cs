@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EFTCore_Lab3.Migrations
 {
     /// <inheritdoc />
-    public partial class DBNEW : Migration
+    public partial class NEW_DB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

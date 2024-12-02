@@ -4,7 +4,7 @@ using CsvHelper.TypeConversion;
 using System;
 using System.Globalization;
 
-namespace  EFTCore_Lab3.Utilities
+namespace EFTCore_Lab3.Core.Utilities
 {
     public class CustomFloatConverter : SingleConverter
     {

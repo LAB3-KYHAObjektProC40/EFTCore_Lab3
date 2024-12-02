@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using EFTCore_Lab3.Models;
+using EFTCore_Lab3.Core.Models;
 
-namespace EFTCore_Lab3.Data
+namespace EFTCore_Lab3.DataAccess
 {
     public class EFContext : DbContext
     {
