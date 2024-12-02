@@ -9,34 +9,42 @@ namespace EFTCore_Lab3.Core.Utilities
 {
     public static class OutdoorDataProcessor
     {
+
         public static void FetchOutdoorAverageTemperature()
         {
-            Console.Write("Ange ett datum (YYYY-MM-DD): ");
-            string? input = Console.ReadLine();
-
-            if (DateTime.TryParse(input, out var specificDate))
+            using (var db = new EFContext())
             {
-                using (var db = new EFContext())
-                {
-                    var allWeatherData = db.WeatherData.ToList();
-                    var utomhus = new Utomhus(allWeatherData);
+                var outdoorData = db.WeatherData
+                    .AsEnumerable() // Fetch data from the database first
+                    .Where(data => data.Plats.Equals("Ute", StringComparison.OrdinalIgnoreCase))
+                    .ToList();
 
+                Console.Write("Ange ett datum (YYYY-MM-DD): ");
+                string? input = Console.ReadLine();
+
+                if (DateTime.TryParse(input, out var specificDate))
+                {
                     try
                     {
-                        var avgTemp = utomhus.GetAverageTemperature(specificDate);
-                        Console.WriteLine($"Medeltemperatur för {specificDate:yyyy-MM-dd}: {avgTemp}°C");
+                        var avgTemp = outdoorData
+                            .Where(data => data.Datum.Date == specificDate.Date)
+                            .Average(data => data.Temp);
+
+                        Console.WriteLine($"Medeltemperatur för {specificDate:yyyy-MM-dd}: {avgTemp:F2}°C");
                     }
-                    catch (ArgumentException ex)
+                    catch (InvalidOperationException)
                     {
-                        Console.WriteLine(ex.Message);
+                        Console.WriteLine("No data available for the specified date.");
                     }
                 }
-            }
-            else
-            {
-                Console.WriteLine("Ogiltigt datumformat.");
+                else
+                {
+                    Console.WriteLine("Ogiltigt datumformat.");
+                }
             }
         }
+
+
 
         public static void SortOutdoorDaysByTemperature()
         {

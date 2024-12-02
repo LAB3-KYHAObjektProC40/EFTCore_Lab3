@@ -1,15 +1,13 @@
-﻿using EFTCore_Lab3.DataAccess;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using EFTCore_Lab3.DataAccess;
+using EFTCore_Lab3.Core.Models;
 
 namespace EFTCore_Lab3.Core.Utilities
 {
     public static class CsvImporter
     {
-
         public static void ImportAndSaveCsvData()
         {
             var csvFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "weatherdata.csv");
@@ -31,6 +29,33 @@ namespace EFTCore_Lab3.Core.Utilities
             catch (Exception ex)
             {
                 Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
+
+
+        /// Loads only indoor weather data from the database.
+
+        public static List<WeatherData> LoadIndoorData()
+        {
+            using (var db = new EFContext())
+            {
+                return db.WeatherData
+                    .Where(data => data.Plats.ToLower() == "inne")
+                    .ToList();
+            }
+        }
+
+
+
+        /// Loads only outdoor weather data from the database.
+
+        public static List<WeatherData> LoadOutdoorData()
+        {
+            using (var db = new EFContext())
+            {
+                return db.WeatherData
+                    .Where(data => data.Plats.ToLower() == "ute")
+                    .ToList();
             }
         }
     }
