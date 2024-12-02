@@ -1,6 +1,7 @@
 ﻿using EFTCore_Lab3.Core.Utilities;
 using EFTCore_Lab3.DataAccess;
 using System;
+using System.IO;
 
 namespace EFTCore_Lab3.UI
 {
@@ -53,46 +54,48 @@ namespace EFTCore_Lab3.UI
                 switch (choice)
                 {
                     case "1":
-                        ImportAndSaveCsvData();
+                        CsvImporter.ImportAndSaveCsvData();
                         break;
 
                     case "2a":
-                        FetchOutdoorAverageTemperature();
+                        OutdoorDataProcessor.FetchOutdoorAverageTemperature();
                         break;
                     case "2b":
-                        SortOutdoorDaysByTemperature();
+                        OutdoorDataProcessor.SortOutdoorDaysByTemperature();
                         break;
                     case "2c":
-                        SortOutdoorDaysByHumidity();
+                        OutdoorDataProcessor.SortOutdoorDaysByHumidity();
                         break;
                     case "2d":
-                        SortOutdoorDaysByMoldRisk();
+                        OutdoorDataProcessor.SortOutdoorDaysByMoldRisk();
                         break;
                     case "2e":
-                        GetMeteorologicalAutumnDate();
+                        OutdoorDataProcessor.GetMeteorologicalAutumnDate();
                         break;
                     case "2f":
-                        GetMeteorologicalWinterDate();
+                        OutdoorDataProcessor.GetMeteorologicalWinterDate();
                         break;
 
+
+
                     case "3a":
-                        FetchIndoorAverageTemperature();
+                        IndoorDataProcessor.FetchIndoorAverageTemperature();
                         break;
                     case "3b":
-                        SortIndoorDaysByTemperature();
+                        IndoorDataProcessor.SortIndoorDaysByTemperature();
                         break;
                     case "3c":
-                        SortIndoorDaysByHumidity();
+                        IndoorDataProcessor.SortIndoorDaysByHumidity();
                         break;
                     case "3d":
-                        SortIndoorDaysByMoldRisk();
+                        IndoorDataProcessor.SortIndoorDaysByMoldRisk();
                         break;
 
                     case "4a":
-                        CalculateBalconyOpenTime();
+                        BalconyDataProcessor.CalculateBalconyOpenTime();
                         break;
                     case "4b":
-                        SortDaysByTemperatureDifference();
+                        BalconyDataProcessor.SortDaysByTemperatureDifference();
                         break;
                     case "5":
                         Console.WriteLine("Avslutar programmet...");
@@ -106,300 +109,6 @@ namespace EFTCore_Lab3.UI
                 Console.ReadKey();
             }
         }
-
-        // Method implementations for CSV import
-        public void ImportAndSaveCsvData()
-        {
-            // Dynamically calculate the path to the Resources folder
-            var csvFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "weatherdata.csv");
-
-            Console.WriteLine($"Looking for file at: {csvFilePath}");
-
-            if (!File.Exists(csvFilePath))
-            {
-                Console.WriteLine("CSV file not found. Please ensure it exists in the 'Resources' folder.");
-                return;
-            }
-
-            try
-            {
-                // Step 1: Read CSV file
-                var weatherData = CsvHelperService.ReadCsvFile(csvFilePath);
-
-                // Step 2: Save data to the database
-                DatabaseHelper.SaveToDatabase(weatherData);
-
-                Console.WriteLine($"{weatherData.Count} records successfully saved to the database.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
-        }
-
-
-        private void FetchOutdoorAverageTemperature()
-        {
-            Console.Write("Ange ett datum (YYYY-MM-DD): ");
-            string? input = Console.ReadLine();
-
-            if (DateTime.TryParse(input, out var specificDate))
-            {
-                using (var db = new EFContext())
-                {
-                    var allWeatherData = db.WeatherData.ToList();
-                    var utomhus = new Utomhus(allWeatherData);
-
-                    try
-                    {
-                        var avgTemp = utomhus.GetAverageTemperature(specificDate);
-                        Console.WriteLine($"Medeltemperatur för {specificDate:yyyy-MM-dd}: {avgTemp}°C");
-                    }
-                    catch (ArgumentException ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine("Ogiltigt datumformat.");
-            }
-        }
-
-        private void SortOutdoorDaysByTemperature()
-        {
-            using (var db = new EFContext())
-            {
-                var allWeatherData = db.WeatherData.ToList();
-                var utomhus = new Utomhus(allWeatherData);
-
-                var sortedByTemperature = utomhus.GetDaysSortedByTemperature();
-                Console.WriteLine("Dagar sorterade efter medeltemperatur (varmast till kallast):");
-                foreach (var (date, avgTemp) in sortedByTemperature)
-                {
-                    Console.WriteLine($"{date:yyyy-MM-dd}: {avgTemp}°C");
-                }
-            }
-        }
-
-        private void SortOutdoorDaysByHumidity()
-        {
-            using (var db = new EFContext())
-            {
-                var allWeatherData = db.WeatherData.ToList();
-                var utomhus = new Utomhus(allWeatherData);
-
-                var sortedByHumidity = utomhus.GetDaysSortedByHumidity();
-                Console.WriteLine("Dagar sorterade efter medelluftfuktighet (torrast till fuktigast):");
-                foreach (var (date, avgHumidity) in sortedByHumidity)
-                {
-                    Console.WriteLine($"{date:yyyy-MM-dd}: {avgHumidity}%");
-                }
-            }
-        }
-
-        private void SortOutdoorDaysByMoldRisk()
-        {
-            using (var db = new EFContext())
-            {
-                var allWeatherData = db.WeatherData.ToList();
-                var utomhus = new Utomhus(allWeatherData);
-
-                var sortedByMoldRisk = utomhus.GetDaysSortedByMoldRisk();
-                Console.WriteLine("Dagar sorterade efter mögelrisk (minst till störst):");
-                foreach (var (date, moldRisk) in sortedByMoldRisk)
-                {
-                    Console.WriteLine($"{date:yyyy-MM-dd}: {moldRisk:F2}");
-                }
-            }
-        }
-        private void GetMeteorologicalAutumnDate()
-        {
-            using (var db = new EFContext())
-            {
-                var allWeatherData = db.WeatherData.ToList();
-                var utomhus = new Utomhus(allWeatherData);
-
-                var autumnDate = utomhus.GetDateForAutumn();
-                if (autumnDate.HasValue)
-                    Console.WriteLine($"Datum för meteorologisk Höst: {autumnDate.Value:yyyy-MM-dd}");
-                else
-                    Console.WriteLine("Ingen meteorologisk Höst hittades.");
-            }
-        }
-
-        private void GetMeteorologicalWinterDate()
-        {
-            using (var db = new EFContext())
-            {
-                var allWeatherData = db.WeatherData.ToList();
-                var utomhus = new Utomhus(allWeatherData);
-
-                var winterDate = utomhus.GetDateForWinter();
-                if (winterDate.HasValue)
-                    Console.WriteLine($"Datum för meteorologisk Vinter: {winterDate.Value:yyyy-MM-dd}");
-                else
-                    Console.WriteLine("Ingen meteorologisk Vinter hittades.");
-            }
-        }
-
-
-        private void FetchIndoorAverageTemperature()
-        {
-            Console.Write("Ange ett datum (YYYY-MM-DD): ");
-            string? input = Console.ReadLine();
-
-            if (DateTime.TryParse(input, out var specificDate))
-            {
-                using (var db = new EFContext())
-                {
-                    var allWeatherData = db.WeatherData.ToList();
-                    var inomhus = new Inomhus(allWeatherData);
-
-                    try
-                    {
-                        var avgTemp = inomhus.GetAverageTemperature(specificDate);
-                        Console.WriteLine($"Medeltemperatur för {specificDate:yyyy-MM-dd}: {avgTemp}°C");
-                    }
-                    catch (ArgumentException ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine("Ogiltigt datumformat.");
-            }
-        }
-
-        private void SortIndoorDaysByTemperature()
-        {
-            using (var db = new EFContext())
-            {
-                var allWeatherData = db.WeatherData.ToList();
-                var inomhus = new Inomhus(allWeatherData);
-
-                var sortedByTemperature = inomhus.GetDaysSortedByTemperature();
-                Console.WriteLine("Inomhus dagar sorterade efter medeltemperatur (varmast till kallast):");
-                foreach (var (date, avgTemp) in sortedByTemperature)
-                {
-                    Console.WriteLine($"{date:yyyy-MM-dd}: {avgTemp}°C");
-                }
-            }
-        }
-
-        private void SortIndoorDaysByHumidity()
-        {
-            using (var db = new EFContext())
-            {
-                var allWeatherData = db.WeatherData.ToList();
-                var inomhus = new Inomhus(allWeatherData);
-
-                var sortedByHumidity = inomhus.GetDaysSortedByHumidity();
-                Console.WriteLine("Inomhus dagar sorterade efter medelluftfuktighet (torrast till fuktigast):");
-                foreach (var (date, avgHumidity) in sortedByHumidity)
-                {
-                    Console.WriteLine($"{date:yyyy-MM-dd}: {avgHumidity}%");
-                }
-            }
-        }
-
-        private void SortIndoorDaysByMoldRisk()
-        {
-            using (var db = new EFContext())
-            {
-                var allWeatherData = db.WeatherData.ToList();
-                var inomhus = new Inomhus(allWeatherData);
-
-                var sortedByMoldRisk = inomhus.GetDaysSortedByMoldRisk();
-                Console.WriteLine("Inomhus dagar sorterade efter mögelrisk (minst till störst):");
-                foreach (var (date, moldRisk) in sortedByMoldRisk)
-                {
-                    Console.WriteLine($"{date:yyyy-MM-dd}: {moldRisk:F2}");
-                }
-            }
-        }
-
-        private void CalculateBalconyOpenTime()
-        {
-            using (var db = new EFContext())
-            {
-                var allWeatherData = db.WeatherData.ToList();
-
-                if (!allWeatherData.Any())
-                {
-                    Console.WriteLine("No weather data available.");
-                    return;
-                }
-
-                var balconyAnalysis = new BalconyDoorAnalysis(allWeatherData);
-                var durations = balconyAnalysis.CalculateBalconyDoorOpenDuration();
-
-                if (!durations.Any())
-                {
-                    Console.WriteLine("No balcony open times calculated.");
-                    return;
-                }
-
-                Console.WriteLine("Balkongdörrens öppettider per dag (sorterat efter längd):");
-                foreach (var (Date, DurationInHours) in durations)
-                {
-                    Console.WriteLine($"{Date:yyyy-MM-dd}: {DurationInHours:F2} timmar");
-                }
-            }
-        }
-
-
-
-
-
-        private void SortDaysByTemperatureDifference()
-        {
-            using (var db = new EFContext())
-            {
-                Console.WriteLine("DEBUG: Fetching all weather data from the database...");
-
-                // Fetch all weather data
-                var allWeatherData = db.WeatherData.ToList();
-
-                if (!allWeatherData.Any())
-                {
-                    Console.WriteLine("DEBUG: No weather data found in the database.");
-                    Console.WriteLine("No weather data available in the database.");
-                    return;
-                }
-
-                // Debugging counts of indoor and outdoor data
-                var indoorDataCount = allWeatherData.Count(w => w.Plats.Equals("Inne", StringComparison.OrdinalIgnoreCase));
-                var outdoorDataCount = allWeatherData.Count(w => w.Plats.Equals("Ute", StringComparison.OrdinalIgnoreCase));
-                Console.WriteLine($"DEBUG: Indoor data count: {indoorDataCount}");
-                Console.WriteLine($"DEBUG: Outdoor data count: {outdoorDataCount}");
-
-                Console.WriteLine("DEBUG: Initializing TemperatureDifferenceAnalysis...");
-                var tempDiffAnalysis = new TemperatureDifferenceAnalysis(allWeatherData);
-
-                Console.WriteLine("DEBUG: Sorting days by temperature difference...");
-                var differences = tempDiffAnalysis.SortByTemperatureDifference();
-
-                if (!differences.Any())
-                {
-                    Console.WriteLine("DEBUG: No temperature differences calculated. No matching timestamps or temperature data.");
-                    Console.WriteLine("No temperature differences found.");
-                    return;
-                }
-
-                Console.WriteLine("Dagar sorterade efter temperaturskillnad (störst till minst):");
-                foreach (var (date, difference) in differences) // Named tuple items
-                {
-                    Console.WriteLine($"DEBUG: Date: {date:yyyy-MM-dd}, Difference: {difference:F2}°C");
-                    Console.WriteLine($"{date:yyyy-MM-dd}: {difference:F2}°C");
-                }
-            }
-        }
-
-
 
 
     }

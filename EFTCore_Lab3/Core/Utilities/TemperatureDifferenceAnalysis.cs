@@ -45,5 +45,59 @@ namespace EFTCore_Lab3.Core.Utilities
             // Sort by difference descending
             return differences.OrderByDescending(d => d.TemperatureDifference).ToList();
         }
+
+        // Calculate the duration the balcony door is open per day
+        public List<(DateTime Date, TimeSpan Duration)> CalculateBalconyDoorOpenDuration()
+        {
+            var durations = new List<(DateTime Date, TimeSpan Duration)>();
+
+            // Group indoor and outdoor data by date
+            var groupedIndoor = _indoorData.GroupBy(data => data.Datum.Date);
+            var groupedOutdoor = _outdoorData.GroupBy(data => data.Datum.Date);
+
+            foreach (var indoorGroup in groupedIndoor)
+            {
+                var date = indoorGroup.Key; // Current date
+                var outdoorGroup = groupedOutdoor.FirstOrDefault(g => g.Key == date);
+
+                if (outdoorGroup == null) continue; // No matching outdoor data for this date
+
+                // Track the duration when the door is open
+                TimeSpan totalDuration = TimeSpan.Zero;
+                DateTime? openStartTime = null;
+
+                foreach (var indoorData in indoorGroup)
+                {
+                    var correspondingOutdoorData = outdoorGroup.FirstOrDefault(data => data.Datum == indoorData.Datum);
+                    if (correspondingOutdoorData == null) continue;
+
+                    if (indoorData.Temp < indoorGroup.Average(data => data.Temp) && correspondingOutdoorData.Temp > outdoorGroup.Average(data => data.Temp))
+                    {
+                        if (openStartTime == null)
+                        {
+                            openStartTime = indoorData.Datum;
+                        }
+                    }
+                    else
+                    {
+                        if (openStartTime != null)
+                        {
+                            totalDuration += indoorData.Datum - openStartTime.Value;
+                            openStartTime = null;
+                        }
+                    }
+                }
+
+                if (openStartTime != null)
+                {
+                    totalDuration += indoorGroup.Last().Datum - openStartTime.Value;
+                }
+
+                durations.Add((date, totalDuration));
+            }
+
+            // Sort by duration descending
+            return durations.OrderByDescending(d => d.Duration).ToList();
+        }
     }
 }
