@@ -1,4 +1,5 @@
-﻿using EFTCore_Lab3.DataAccess;
+﻿using EFTCore_Lab3.Core.Models;
+using EFTCore_Lab3.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,20 +71,38 @@ namespace EFTCore_Lab3.Core.Utilities
             }
         }
 
-        public static void SortIndoorDaysByMoldRisk()
+        public static void SortIndoorDaysByMoldRisk(List<WeatherData> indoorData)
         {
-            using (var db = new EFContext())
-            {
-                var allWeatherData = db.WeatherData.ToList();
-                var inomhus = new Inomhus(allWeatherData);
+            var groupedIndoor = indoorData.GroupBy(data => data.Datum.Date);
 
-                var sortedByMoldRisk = inomhus.GetDaysSortedByMoldRisk();
-                Console.WriteLine("Inomhus dagar sorterade efter mögelrisk (minst till störst):");
-                foreach (var (date, moldRisk) in sortedByMoldRisk)
-                {
-                    Console.WriteLine($"{date:yyyy-MM-dd}: {moldRisk:F2}");
-                }
+            var moldRiskList = new List<(DateTime Date, double MoldRisk)>();
+
+            foreach (var group in groupedIndoor)
+            {
+                var date = group.Key;
+                var averageTemp = group.Average(data => data.Temp);
+                var averageHumidity = group.Average(data => data.Luftfuktighet);
+
+                // Simple mold risk calculation
+                double moldRisk = CalculateMoldRisk(averageTemp, averageHumidity);
+
+                moldRiskList.Add((date, moldRisk));
             }
+
+            var sortedMoldRiskList = moldRiskList.OrderBy(r => r.MoldRisk).ToList();
+
+            Console.WriteLine("Date\t\tMold Risk");
+            foreach (var item in sortedMoldRiskList)
+            {
+                Console.WriteLine($"{item.Date.ToShortDateString()}\t{item.MoldRisk:F2}");
+            }
+        }
+
+        private static double CalculateMoldRisk(double temperature, double humidity)
+        {
+            // Simple mold risk formula: (humidity - 70) * (temperature / 25)
+            // Adjust the formula as needed for your specific requirements
+            return (humidity - 70) * (temperature / 25);
         }
     }
 }

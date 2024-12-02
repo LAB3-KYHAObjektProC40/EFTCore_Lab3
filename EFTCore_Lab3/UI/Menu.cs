@@ -88,7 +88,8 @@ namespace EFTCore_Lab3.UI
                         IndoorDataProcessor.SortIndoorDaysByHumidity();
                         break;
                     case "3d":
-                        IndoorDataProcessor.SortIndoorDaysByMoldRisk();
+                        var indoorData = CsvImporter.LoadIndoorData();
+                        IndoorDataProcessor.SortIndoorDaysByMoldRisk(indoorData);
                         break;
 
                     case "4a":
