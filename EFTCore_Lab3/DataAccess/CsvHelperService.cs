@@ -1,13 +1,13 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
-using EFTCore_Lab3.Models;
-using EFTCore_Lab3.Utilities; 
+using EFTCore_Lab3.Core.Models;
+using EFTCore_Lab3.Core.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 
-namespace EFTCore_Lab3.Utilities
+namespace EFTCore_Lab3.DataAccess
 {
     public static class CsvHelperService
     {

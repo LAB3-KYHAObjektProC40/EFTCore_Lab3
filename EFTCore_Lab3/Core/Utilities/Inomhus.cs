@@ -1,19 +1,18 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using EFTCore_Lab3.Models;
+using EFTCore_Lab3.Core.Models;
 
-
-namespace EFTCore_Lab3.Utilities
+namespace EFTCore_Lab3.Core.Utilities
 {
-    public class Utomhus
+    public class Inomhus
     {
         private readonly List<WeatherData> _weatherData;
 
-        public Utomhus(List<WeatherData> weatherData)
+        public Inomhus(List<WeatherData> weatherData)
         {
-            // Filter only "Ute" data
-            _weatherData = weatherData.Where(data => data.Plats.Equals("Ute", StringComparison.OrdinalIgnoreCase)).ToList();
+            // Filter only "Inne" data
+            _weatherData = weatherData.Where(data => data.Plats.Equals("Inne", StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
         // 1. Average temperature for a specific date
@@ -49,7 +48,6 @@ namespace EFTCore_Lab3.Utilities
         }
 
 
-
         // 4. Sort days by risk of mold (least to greatest)
         public List<(DateTime Date, float MoldRisk)> GetDaysSortedByMoldRisk()
         {
@@ -65,52 +63,10 @@ namespace EFTCore_Lab3.Utilities
                 .ToList();
         }
 
-        // 5. Date for meteorological autumn
-        public DateTime? GetDateForAutumn()
-        {
-            var autumnDays = _weatherData
-                .GroupBy(data => data.Datum.Date)
-                .Where(g => g.Average(data => data.Temp) <= 10)
-                .OrderBy(g => g.Key)
-                .ToList();
-
-            // Check for 5 consecutive days below 10°C
-            for (int i = 0; i < autumnDays.Count - 4; i++)
-            {
-                if (autumnDays.Skip(i).Take(5).All(g => g.Average(data => data.Temp) <= 10))
-                {
-                    return autumnDays[i].Key;
-                }
-            }
-
-            return null; // No autumn detected
-        }
-
-        // 6. Date for meteorological winter
-        public DateTime? GetDateForWinter()
-        {
-            var winterDays = _weatherData
-                .GroupBy(data => data.Datum.Date)
-                .Where(g => g.Average(data => data.Temp) <= 0)
-                .OrderBy(g => g.Key)
-                .ToList();
-
-            // Check for 5 consecutive days below 0°C
-            for (int i = 0; i < winterDays.Count - 4; i++)
-            {
-                if (winterDays.Skip(i).Take(5).All(g => g.Average(data => data.Temp) <= 0))
-                {
-                    return winterDays[i].Key;
-                }
-            }
-
-            return null; // No winter detected
-        }
-
         // Helper method to calculate mold risk
         private static float CalculateMoldRisk(float temperature, int humidity)
         {
-            // Mold risk formula: temperature * (humidity / 100), only if humidity > 70 and temperature >= 0
+            // Mold risk formula: Temp * (Humidity / 100), only if Humidity > 70 and Temp >= 0
             return humidity > 70 && temperature >= 0 ? temperature * (humidity / 100f) : 0;
         }
     }
